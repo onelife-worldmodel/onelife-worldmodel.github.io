@@ -430,6 +430,262 @@
     </div>
 </section>
 
+<section class="section" id="sec-crafter-oo">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Crafter-OO: A Testbed for Symbolic World Modeling</h2>
+        <div class="content has-text-justified">
+            <p>
+                A common design assumption in previous work on symbolic world modeling is that we have access to an object-oriented world state to use as input to the symbolic world model under construction. In practice, this state is only easily accessible for simple environments such as Minigrid or BabyAI. Programmatic access to the state of more complex environments such as Atari games is only possible due to standalone development efforts such as OCAtari which makes the internal object-oriented state of these environments accessible to researchers. The lack of an environment with an exposed, object-oriented state that is more complex than gridworlds or with mechanics more diverse than Atari games has thus far prevented evaluation and development of symbolic world modeling approaches for more complex environments.
+            </p>
+            
+            <p>
+                To close this gap, we implement <strong>Crafter-OO</strong>, which emulates the Crafter environment by operating purely on an explicit, object-oriented game state. Additionally, we contribute utilities for programmatically modifying the game state to create evaluation scenarios.
+            </p>
+
+            <h3 class="title is-4">Interactive State Transition Example</h3>
+            <p>
+                Below is a simple example showing how actions transform the object-oriented game state in Crafter-OO. Click the button to see how the state changes when the player takes an action.
+            </p>
+
+            <div style="margin: 2rem 0;">
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <button class="button is-primary" id="action-btn-1" onclick="applyAction(1)">
+                        <span class="icon"><i class="fas fa-hand-rock"></i></span>
+                        <span>Action: Do (Collect Wood)</span>
+                    </button>
+                    <button class="button is-info" id="action-btn-2" onclick="applyAction(2)">
+                        <span class="icon"><i class="fas fa-arrow-right"></i></span>
+                        <span>Action: Move East</span>
+                    </button>
+                    <button class="button is-warning" id="reset-btn" onclick="resetState()">
+                        <span class="icon"><i class="fas fa-undo"></i></span>
+                        <span>Reset</span>
+                    </button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                    <div>
+                        <h4 class="title is-6">Current State</h4>
+                        <pre id="current-state" style="background: #f5f5f5; padding: 1rem; border-radius: 4px; overflow-x: auto; max-height: 400px; font-size: 0.85rem;"></pre>
+                    </div>
+                    
+                    <div id="diff-container" style="display: none;">
+                        <h4 class="title is-6">Changes (Diff)</h4>
+                        <pre id="state-diff" style="background: #f5f5f5; padding: 1rem; border-radius: 4px; overflow-x: auto; max-height: 300px; font-size: 0.85rem;"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .diff-add { background-color: #d4edda; color: #155724; }
+                .diff-remove { background-color: #f8d7da; color: #721c24; }
+                .diff-context { color: #6c757d; }
+            </style>
+
+            <script>
+                const initialState = {
+                    "player": {
+                        "position": { "x": 32, "y": 29 },
+                        "health": 9,
+                        "facing": { "x": 0, "y": -1 },
+                        "action": "move_up",
+                        "inventory": {
+                            "wood": 0,
+                            "stone": 0,
+                            "coal": 0
+                        }
+                    },
+                    "entities": [
+                        {
+                            "type": "tree",
+                            "position": { "x": 32, "y": 28 }
+                        },
+                        {
+                            "type": "cow",
+                            "entity_id": 15,
+                            "position": { "x": 21, "y": 27 },
+                            "health": 3
+                        },
+                        {
+                            "type": "zombie",
+                            "entity_id": 67,
+                            "position": { "x": 41, "y": 10 },
+                            "health": 5,
+                            "cooldown": 0
+                        }
+                    ],
+                    "step_count": 4
+                };
+
+                const stateAfterDo = {
+                    "player": {
+                        "position": { "x": 32, "y": 29 },
+                        "health": 9,
+                        "facing": { "x": 0, "y": -1 },
+                        "action": "do",
+                        "inventory": {
+                            "wood": 1,
+                            "stone": 0,
+                            "coal": 0
+                        }
+                    },
+                    "entities": [
+                        {
+                            "type": "cow",
+                            "entity_id": 15,
+                            "position": { "x": 22, "y": 27 },
+                            "health": 3
+                        },
+                        {
+                            "type": "zombie",
+                            "entity_id": 67,
+                            "position": { "x": 42, "y": 10 },
+                            "health": 5,
+                            "cooldown": 0
+                        }
+                    ],
+                    "step_count": 5
+                };
+
+                const stateAfterMove = {
+                    "player": {
+                        "position": { "x": 33, "y": 12 },
+                        "health": 8,
+                        "facing": { "x": 1, "y": 0 },
+                        "action": "move_right",
+                        "inventory": {
+                            "wood": 1,
+                            "stone": 9,
+                            "coal": 0
+                        }
+                    },
+                    "entities": [
+                        {
+                            "type": "cow",
+                            "entity_id": 20,
+                            "position": { "x": 29, "y": 11 },
+                            "health": 3
+                        },
+                        {
+                            "type": "zombie",
+                            "entity_id": 67,
+                            "position": { "x": 42, "y": 10 },
+                            "health": 5,
+                            "cooldown": 0
+                        },
+                        {
+                            "type": "zombie",
+                            "entity_id": 86,
+                            "position": { "x": 23, "y": 32 },
+                            "health": 5,
+                            "cooldown": 0
+                        }
+                    ],
+                    "step_count": 170
+                };
+
+                let currentState = JSON.parse(JSON.stringify(initialState));
+
+                function displayState(state) {
+                    document.getElementById('current-state').textContent = JSON.stringify(state, null, 2);
+                }
+
+                function generateDiff(oldState, newState) {
+                    const lines = [];
+                    
+                    // Player changes
+                    if (oldState.player.action !== newState.player.action) {
+                        lines.push(`<span class="diff-remove">- player.action: "${oldState.player.action}"</span>`);
+                        lines.push(`<span class="diff-add">+ player.action: "${newState.player.action}"</span>`);
+                    }
+                    
+                    if (oldState.player.position.x !== newState.player.position.x || 
+                        oldState.player.position.y !== newState.player.position.y) {
+                        lines.push(`<span class="diff-remove">- player.position: (${oldState.player.position.x}, ${oldState.player.position.y})</span>`);
+                        lines.push(`<span class="diff-add">+ player.position: (${newState.player.position.x}, ${newState.player.position.y})</span>`);
+                    }
+
+                    if (oldState.player.health !== newState.player.health) {
+                        lines.push(`<span class="diff-remove">- player.health: ${oldState.player.health}</span>`);
+                        lines.push(`<span class="diff-add">+ player.health: ${newState.player.health}</span>`);
+                    }
+
+                    if (oldState.player.facing.x !== newState.player.facing.x || 
+                        oldState.player.facing.y !== newState.player.facing.y) {
+                        lines.push(`<span class="diff-remove">- player.facing: (${oldState.player.facing.x}, ${oldState.player.facing.y})</span>`);
+                        lines.push(`<span class="diff-add">+ player.facing: (${newState.player.facing.x}, ${newState.player.facing.y})</span>`);
+                    }
+                    
+                    // Inventory changes
+                    for (const key in oldState.player.inventory) {
+                        if (oldState.player.inventory[key] !== newState.player.inventory[key]) {
+                            lines.push(`<span class="diff-remove">- player.inventory.${key}: ${oldState.player.inventory[key]}</span>`);
+                            lines.push(`<span class="diff-add">+ player.inventory.${key}: ${newState.player.inventory[key]}</span>`);
+                        }
+                    }
+                    
+                    // Entity changes
+                    const oldEntities = new Map(oldState.entities.map(e => [e.entity_id, e]));
+                    const newEntities = new Map(newState.entities.map(e => [e.entity_id, e]));
+                    
+                    for (const [id, oldEntity] of oldEntities.entries()) {
+                        const newEntity = newEntities.get(id);
+                        if (!newEntity) {
+                            lines.push(`<span class="diff-remove">- Entity removed: ${oldEntity.type} (id: ${id})</span>`);
+                        } else if (oldEntity.position.x !== newEntity.position.x || 
+                                   oldEntity.position.y !== newEntity.position.y) {
+                            lines.push(`<span class="diff-remove">- ${oldEntity.type}(${id}).position: (${oldEntity.position.x}, ${oldEntity.position.y})</span>`);
+                            lines.push(`<span class="diff-add">+ ${newEntity.type}(${id}).position: (${newEntity.position.x}, ${newEntity.position.y})</span>`);
+                        }
+                    }
+                    
+                    for (const [id, newEntity] of newEntities.entries()) {
+                        if (!oldEntities.has(id)) {
+                            lines.push(`<span class="diff-add">+ Entity added: ${newEntity.type} (id: ${id}) at (${newEntity.position.x}, ${newEntity.position.y})</span>`);
+                        }
+                    }
+                    
+                    // Step count
+                    if (oldState.step_count !== newState.step_count) {
+                        lines.push(`<span class="diff-remove">- step_count: ${oldState.step_count}</span>`);
+                        lines.push(`<span class="diff-add">+ step_count: ${newState.step_count}</span>`);
+                    }
+                    
+                    return lines.join('\n');
+                }
+
+                function applyAction(actionType) {
+                    const oldState = JSON.parse(JSON.stringify(currentState));
+                    
+                    if (actionType === 1) {
+                        currentState = JSON.parse(JSON.stringify(stateAfterDo));
+                    } else if (actionType === 2) {
+                        currentState = JSON.parse(JSON.stringify(stateAfterMove));
+                    }
+                    
+                    displayState(currentState);
+                    
+                    const diffHtml = generateDiff(oldState, currentState);
+                    document.getElementById('state-diff').innerHTML = diffHtml;
+                    document.getElementById('diff-container').style.display = 'block';
+                }
+
+                function resetState() {
+                    currentState = JSON.parse(JSON.stringify(initialState));
+                    displayState(currentState);
+                    document.getElementById('diff-container').style.display = 'none';
+                }
+
+                // Initialize display
+                displayState(currentState);
+            </script>
+
+            <p style="margin-top: 1.5rem;">
+                The state representation captures the complete game world including player attributes (position, health, inventory), entities (cows, zombies, trees), and environmental properties. When an action is taken, multiple aspects of the state can change simultaneously: the player's action and inventory update, entities may move (like the cow and zombie), and environmental objects (like trees) may be removed. The world model must learn to predict these cascading changes from observing transitions.
+            </p>
+        </div>
+    </div>
+</section>
 
 <section class="section" id="sec-evaluation">
     <div class="container is-max-desktop content-block">
