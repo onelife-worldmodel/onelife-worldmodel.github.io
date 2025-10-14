@@ -407,14 +407,10 @@
                 abundant interaction data, simple mechanics, and human-provided guidance. We
                 address the more realistic and challenging problem of learning a symbolic world
                 model in a complex, stochastic environment with severe constraints: a limited
-                interaction budget where the agent has only “one life” to explore a hostile envi-
-                ronment and no external guidance in the form of human-provided, environment-
-                specific rewards or goals. We introduce ONELIFE, a framework that models world
-                dynamics through conditionally-activated programmatic laws within a probabilis-
-                tic programming framework. Each law operates through a precondition-effect
+                interaction budget where the agent has only "one life" to explore a hostile environment and no external guidance in the form of human-provided, environment-specific rewards or goals. We introduce <span class="system-name">OneLife</span>, a framework that models world
+                dynamics through conditionally activated programmatic laws within a probabilistic programming framework. Each law operates through a precondition-effect
                 structure, allowing it to remain silent on irrelevant aspects of the world state and
-                predict only the attributes it directly governs. This creates a dynamic computa-
-                tion graph that routes both inference and optimization only through relevant laws
+                predict only the attributes it directly governs. This creates a dynamic computation graph that routes both inference and optimization only through relevant laws
                 for each transition, avoiding the scaling challenges that arise when all laws must
                 contribute to predictions about a complex, hierarchical state space, and enabling
                 accurate learning of stochastic dynamics even when most rules are inactive at any
@@ -422,12 +418,9 @@
                 introduce a new evaluation protocol that measures (a) state ranking, the ability to
                 distinguish plausible future states from implausible ones, and (b) state fidelity,
                 the ability to generate future states that closely resemble reality. We develop
-                and evaluate our framework on Crafter-OO, our reimplementation of the popu-
-                lar Crafter environment that exposes a structured, object-oriented symbolic state
-                and a pure transition function that operates on that state alone. ONELIFE can suc-
-                cessfully learn key environment dynamics from minimal, unguided interaction,
-                outperforming a strong baseline on 16 out of 23 scenarios tested. We also demon-
-                strate the world model’s utility for planning, where rollouts simulated within the
+                and evaluate our framework on Crafter-OO, our reimplementation of the popular Crafter environment that exposes a structured, object-oriented symbolic state
+                and a pure transition function that operates on that state alone. <span class="system-name">OneLife</span> can successfully learn key environment dynamics from minimal, unguided interaction,
+                outperforming a strong baseline on 16 out of 23 scenarios tested. We also demonstrate the world model's utility for planning, where rollouts simulated within the
                 world model successfully identify superior strategies in goal-oriented tasks. Our
                 work establishes a foundation for autonomously constructing programmatic world
                 models of unknown, complex environments.
@@ -489,7 +482,7 @@
             <figure style="margin: 2rem 0;">
                 <img src="static/scenario_mrr_results.png" alt="Per-scenario MRR results" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
                 <figcaption class="caption">
-                    Per-scenario state ranking performance of <span style="color: #6495ED;">OneLife</span> (Ours) versus <span style="color: red;">PoE-World</span>, measured by Mean Reciprocal Rank (MRR ↑). Scenarios are grouped by the core game mechanic they test. Horizontal lines show the average MRR across all scenarios in a group for <span style="color: #6495ED;">OneLife</span> and <span style="color: red;">PoE-World</span>. OneLife demonstrates a more accurate understanding of the environment's laws, achieving a higher average MRR and outperforming the baseline on the majority of individual scenarios.
+                    Per-scenario state ranking performance of <span class="system-name">OneLife</span> (Ours) versus <span style="color: red;">PoE-World</span>, measured by Mean Reciprocal Rank (MRR ↑). Scenarios are grouped by the core game mechanic they test. Horizontal lines show the average MRR across all scenarios in a group for <span class="system-name">OneLife</span> and <span style="color: red;">PoE-World</span>. <span class="system-name">OneLife</span> demonstrates a more accurate understanding of the environment's laws, achieving a higher average MRR and outperforming the baseline on the majority of individual scenarios.
                 </figcaption>
             </figure>
 
@@ -568,10 +561,10 @@
     <div class="container is-max-desktop content-block">
         <h2 class="title is-3">Citation</h2>
         <div class="content">
-            <pre><code>@inproceedings{khan2025executable,
-  title={Executable Functional Abstractions: Inferring Generative Programs for Advanced Math Problems},
-  author={Khan, Zaid and Stengel-Eskin, Elias and Prasad, Archiki and Cho, Jaemin and Bansal, Mohit},
-  journal={arXiv preprint arXiv:2504.09763},
+            <pre><code>@inproceedings{khan2025onelife,
+  title={One Life to Learn: Inferring Symbolic World Models for Stochastic Environments from Unguided Exploration},
+  author={Khan, Zaid and Prasad, Archiki and Stengel-Eskin, Elias and Cho, Jaemin and Bansal, Mohit},
+  journal={arXiv preprint arXiv:XXXX.XXXXX},
   year={2025}
 }</code></pre>
         </div>
@@ -590,10 +583,10 @@
 
 <script>
 document.getElementById('copy-citation').addEventListener('click', function() {
-    const citationText = `@inproceedings{khan2025executable,
-  title={Executable Functional Abstractions: Inferring Generative Programs for Advanced Math Problems},
-  author={Khan, Zaid and Stengel-Eskin, Elias and Prasad, Archiki and Cho, Jaemin and Bansal, Mohit},
-  journal={arXiv preprint arXiv:2504.09763},
+    const citationText = `@inproceedings{khan2025onelife,
+  title={One Life to Learn: Inferring Symbolic World Models for Stochastic Environments from Unguided Exploration},
+  author={Khan, Zaid and Prasad, Archiki and Stengel-Eskin, Elias and Cho, Jaemin and Bansal, Mohit},
+  journal={arXiv preprint arXiv:XXXX.XXXXX},
   year={2025}
 }`;
     
