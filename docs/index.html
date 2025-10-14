@@ -1,1 +1,612 @@
-placeholder
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>One Life to Learn: Inferring Symbolic World Models for Stochastic Environments from Unguided Exploration</title>
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="One Life to Learn: Inferring Symbolic World Models for Stochastic Environments from Unguided Exploration">
+    <meta property="og:description" content="We introduce Executable Functional Abstractions (EFAs) to model the latent structure of computational math problems and present EFAGen, a method to infer these abstractions from natural language problems.">
+    <meta property="og:image" content="https://zaidkhan.me/EFAGen/static/teaser.png">
+    <meta property="og:url" content="https://zaidkhan.me/EFAGen">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.6;
+        }
+        .publication-title {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            font-size: 2.3rem !important;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        .author-block {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+        }
+        .content-block {
+            max-width: 800px;
+        }
+        .abstract {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .teaser .hero-body {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+        .teaser {
+            font-family: 'DM Sans', sans-serif;
+        }
+        .teaser img {
+            max-height: 500px;
+            width: auto;
+            margin: 0 auto 2rem;
+            display: block;
+        }
+        .publication-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .link-block {
+            flex: 0 0 auto;
+        }
+        .content {
+            font-family: 'DM Sans', sans-serif;
+        }
+        .navbar, .footer {
+            font-family: 'DM Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+        }
+        .example-images {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .example-column {
+            width: 24%;
+            margin-bottom: 1rem;
+        }
+        .example-column img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        
+        @media screen and (max-width: 768px) {
+            .example-column {
+                width: 48%;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .example-column {
+                width: 100%;
+            }
+        }
+        .limited-width-image {
+            max-width: 400px;
+            margin: 0 auto;
+            display: block;
+        }
+        .tabs.is-boxed a {
+            padding: 0.75rem 1.5rem;
+        }
+        .tabs .icon {
+            margin-right: 0.5rem;
+        }
+        .tab-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        @media screen and (max-width: 768px) {
+            .publication-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            .link-block {
+                width: 100%;
+                max-width: 200px;
+            }
+            .link-block .button {
+                width: 100%;
+            }
+        }
+        
+        .dataTables_wrapper {
+            overflow-x: auto;
+        }
+        
+        table.dataTable {
+            width: 100% !important;
+        }
+        
+        .dataTables_scrollBody {
+            overflow-x: hidden !important;
+            width: 100% !important;
+        }
+
+        @media screen and (max-width: 768px) {
+            .tabs ul {
+                flex-wrap: wrap;
+            }
+            .tabs li {
+                flex-basis: 100%;
+            }
+            .tabs.is-boxed a {
+                border-radius: 0;
+                margin-bottom: 1px;
+            }
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            min-width: 600px;
+            table-layout: fixed;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.5rem;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            width: 25%;
+        }
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            width: 20%;
+        }
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            width: 25%;
+        }
+        .table th:nth-child(4),
+        .table td:nth-child(4) {
+            width: 20%;
+        }
+        .table th:nth-child(5),
+        .table td:nth-child(5) {
+            width: 10%;
+        }
+
+        @media screen and (max-width: 768px) {
+            .table th,
+            .table td {
+                font-size: 0.9rem;
+                padding: 0.4rem;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .table th,
+            .table td {
+                font-size: 0.8rem;
+                padding: 0.3rem;
+            }
+        }
+
+        .publication-links .button {
+            background: linear-gradient(to right, #292524, #44403c);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 2.8em;
+            padding: 0 1.5em;
+            border-radius: 8px !important;
+        }
+
+        @media screen and (max-width: 768px) {
+            .publication-links .button {
+                border-radius: 6px !important;
+            }
+        }
+
+        .publication-links .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background: linear-gradient(to right, #44403c, #292524);
+        }
+
+        h2.title {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            line-height: 1.3;
+            margin-bottom: 1.2rem;
+        }
+
+        .content p {
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.7;
+        }
+
+        .section {
+            padding: 3rem 1.5rem;
+        }
+
+        .system-name {
+            font-family: 'JetBrains Mono', monospace;
+            color: #2563eb;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .caption {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #4a4a4a;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .caption a {
+            color: #2563eb;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(37, 99, 235, 0.3);
+            transition: all 0.2s ease;
+        }
+        
+        .caption a:hover {
+            color: #1d4ed8;
+            border-bottom-color: #1d4ed8;
+        }
+        
+        .efa-term {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="https://zaidkhan.me/">
+            <span class="icon">
+                <i class="fas fa-home"></i>
+            </span>
+        </a>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-body">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered">
+                <div class="column has-text-centered">
+                    <h1 class="title is-1 publication-title">One Life to Learn: Inferring Symbolic World Models for Stochastic Environments from Unguided Exploration</h1>
+                    <div class="is-size-5 publication-authors">
+                        <span class="author-block">
+                            <a href="https://zaidkhan.me/">Zaid Khan</a>,
+                        </span>
+                        <span class="author-block">
+                            <a href="https://archiki.github.io/">Archiki Prasad</a>,
+                        </span>
+                        <span class="author-block">
+                            <a href="https://esteng.github.io/">Elias Stengel-Eskin</a>,
+                        </span>
+                        <span class="author-block">
+                            <a href="https://j-min.io/">Jaemin Cho</a>,
+                        </span>
+                        <span class="author-block">
+                            <a href="https://www.cs.unc.edu/~mbansal/">Mohit Bansal</a>
+                        </span>
+                    </div>
+
+                    <div class="is-size-5 publication-authors">
+                        <span class="author-block">University of North Carolina, Chapel Hill</span>
+                        <br>
+                    </div>
+
+                    <div class="is-size-5 publication-authors" style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap;">
+                            <img src="static/unc_nlp_logo.png" alt="UNC NLP Logo" style="height: 60px; width: auto;">
+                        </div>
+                    </div>
+
+                    <div class="column has-text-centered">
+                        <div class="publication-links">
+                            <span class="link-block">
+                                <a href="https://arxiv.org/abs/2504.09763" class="external-link button is-normal is-dark">
+                                    <span class="icon">
+                                        <i class="ai ai-arxiv"></i>
+                                    </span>
+                                    <span>Paper</span>
+                                </a>
+                            </span>
+                            <span class="link-block">
+                                <a href="https://github.com/codezakh/onelife" class="external-link button is-normal is-rounded is-dark">
+                                    <span class="icon">
+                                        <i class="fab fa-github"></i>
+                                    </span>
+                                    <span>OneLife</span>
+                                </a>
+                            </span>
+                            <span class="link-block">
+                                <a href="https://github.com/codezakh/crafter-oo" class="external-link button is-normal is-rounded is-dark">
+                                    <span class="icon">
+                                        <i class="fab fa-github"></i>
+                                    </span>
+                                    <span>Crafter-OO</span>
+                                </a>
+                            </span>
+                            <span class="link-block">
+                                <button class="button is-normal is-rounded is-dark" id="copy-citation">
+                                    <span class="icon">
+                                        <i class="fas fa-copy"></i>
+                                    </span>
+                                    <span>BibTeX</span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="hero teaser" style="margin-top: -3rem;">
+    <div class="container is-max-desktop">
+        <div class="hero-body" style="padding-top: 0; padding-bottom: 0;">
+            <img src="static/website-teaser.gif" alt="OneLife Overview" style="margin-bottom: 1rem;">
+            <div class="caption">
+                <span class="system-name">OneLife</span> synthesizes world laws from a single unguided (no environment-specific rewards / goals) episode in a hostile, stochastic environment
+                <span class="system-name">OneLife</span> models the world as mixture of laws written in code with a precondition-effect structure, each governing an aspect of the world, and infers parameters for the mixture that best explain the observed dynamics of the world.
+                The resulting world model (WM) provides a probability distribution over attributes of an object-oriented world state, such as the <code>position</code> of a particular zombie.
+                <span class="system-name">OneLife</span> outperforms a strong baseline in modeling 16/23 core game mechanics tested, measured by MRR (Mean Reciprocal Rank) of the true next state (<a href="#sec-evaluation">see evaluation</a>) under the WM's likelihood.
+                See <a href="zombie-law.html">zombie law</a> for a synthesized zombie law.
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified abstract">
+            <p>
+                Symbolic world modeling is the task of inferring and representing the transitional
+                dynamics of an environment as an executable program. Previous research on
+                symbolic world modeling has focused on largely deterministic environments with
+                abundant interaction data, simple mechanics, and human-provided guidance. We
+                address the more realistic and challenging problem of learning a symbolic world
+                model in a complex, stochastic environment with severe constraints: a limited
+                interaction budget where the agent has only “one life” to explore a hostile envi-
+                ronment and no external guidance in the form of human-provided, environment-
+                specific rewards or goals. We introduce ONELIFE, a framework that models world
+                dynamics through conditionally-activated programmatic laws within a probabilis-
+                tic programming framework. Each law operates through a precondition-effect
+                structure, allowing it to remain silent on irrelevant aspects of the world state and
+                predict only the attributes it directly governs. This creates a dynamic computa-
+                tion graph that routes both inference and optimization only through relevant laws
+                for each transition, avoiding the scaling challenges that arise when all laws must
+                contribute to predictions about a complex, hierarchical state space, and enabling
+                accurate learning of stochastic dynamics even when most rules are inactive at any
+                given moment. To evaluate our approach under these demanding constraints, we
+                introduce a new evaluation protocol that measures (a) state ranking, the ability to
+                distinguish plausible future states from implausible ones, and (b) state fidelity,
+                the ability to generate future states that closely resemble reality. We develop
+                and evaluate our framework on Crafter-OO, our reimplementation of the popu-
+                lar Crafter environment that exposes a structured, object-oriented symbolic state
+                and a pure transition function that operates on that state alone. ONELIFE can suc-
+                cessfully learn key environment dynamics from minimal, unguided interaction,
+                outperforming a strong baseline on 16 out of 23 scenarios tested. We also demon-
+                strate the world model’s utility for planning, where rollouts simulated within the
+                world model successfully identify superior strategies in goal-oriented tasks. Our
+                work establishes a foundation for autonomously constructing programmatic world
+                models of unknown, complex environments.
+
+            </p>
+        </div>
+    </div>
+</section>
+
+
+<section class="section" id="sec-evaluation">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Evaluation Protocols and Metrics</h2>
+        <div class="content has-text-justified">
+            <figure style="margin-bottom: 2rem;">
+                <img src="static/evaluation_sketch.png" alt="Evaluation metrics illustration" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
+                <figcaption class="caption">
+                    Two evaluation metric categories. We assess world models through <strong>state ranking</strong> (ability to distinguish plausible future states from implausible ones using programmatic mutators) and <strong>state fidelity</strong> (ability to generate states that closely resemble reality using edit distance metrics).
+                </figcaption>
+            </figure>
+            
+            <p>
+                Evaluating world models for stochastic environments requires measuring two key capabilities:
+            </p>
+            
+            <h3 class="title is-5">State Ranking</h3>
+            <p>
+                These metrics assess whether the model ranks the true next state higher than distractor states. We create distractors using <strong>mutators</strong>—programmatic functions that apply semantically meaningful, rule-breaking changes (e.g., allowing crafting without prerequisites).
+            </p>
+            <ul>
+                <li><strong>Rank @ 1 (R@1):</strong> Binary metric measuring if the model assigns highest probability to the true state.</li>
+                <li><strong>Mean Reciprocal Rank (MRR):</strong> Averages the reciprocal rank of the correct state: \(\text{MRR} = \frac{1}{N} \sum_{i=1}^{N} \frac{1}{r_i}\)</li>
+            </ul>
+            
+            <h3 class="title is-5">State Fidelity</h3>
+            <p>
+                These metrics measure the error between predicted and ground truth states:
+            </p>
+            <ul>
+                <li><strong>Raw Edit Distance:</strong> Number of atomic JSON Patch operations needed to transform predicted state into ground truth.</li>
+                <li><strong>Normalized Edit Distance:</strong> Raw edit distance divided by total state elements.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Evaluation Framework Implementation on Crafter-OO</h2>
+        <div class="content has-text-justified">
+            <p>
+                Evaluating a world model on random rollouts may not provide sufficient coverage of rare or important events in an environment. To ensure our evaluation is comprehensive, we create evaluation trajectories from a suite of <strong>scenarios</strong>. Each scenario runs a short, scripted policy from an initial state designed to reliably exercise a specific game mechanic or achieve a particular goal.
+            </p>
+            
+            <p>
+                Our scenarios cover every achievement in the achievement tree of Crafter-OO/Crafter, ranging from basic actions like collecting wood to complex, multi-step tasks like crafting an iron sword. We generate distractors for each transition in the evaluation dataset using a bank of 8 mutators which each produce a subtle, but illegal transformation of the game state in response to an action—such as causing an incorrect item to be produced when taking a crafting action, or allowing an item to be produced without the correct requirements.
+            </p>
+
+            <figure style="margin: 2rem 0;">
+                <img src="static/scenario_mrr_results.png" alt="Per-scenario MRR results" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
+                <figcaption class="caption">
+                    Per-scenario state ranking performance of <span style="color: #6495ED;">OneLife</span> (Ours) versus <span style="color: red;">PoE-World</span>, measured by Mean Reciprocal Rank (MRR ↑). Scenarios are grouped by the core game mechanic they test. Horizontal lines show the average MRR across all scenarios in a group for <span style="color: #6495ED;">OneLife</span> and <span style="color: red;">PoE-World</span>. OneLife demonstrates a more accurate understanding of the environment's laws, achieving a higher average MRR and outperforming the baseline on the majority of individual scenarios.
+                </figcaption>
+            </figure>
+
+            <h3 class="title is-4">Experimental Setup and Results</h3>
+            
+            <p>
+                We conduct a series of experiments to evaluate <span class="system-name">OneLife</span>. First, we quantitatively assess the model's predictive accuracy using our state ranking and fidelity metrics across a comprehensive suite of scenarios. Second, we test the model's ability to support planning in imagination by performing simulated rollouts of different policies.
+            </p>
+
+            <h4 class="title is-5">Baseline Models</h4>
+            <ul>
+                <li><strong>Random World Model:</strong> A model that assigns uniform probability to all candidate states. Its performance is equivalent to random guessing and serves as a sanity check.</li>
+                <li><strong>PoE-World:</strong> A state-of-the-art symbolic world model that scaled symbolic world modeling to domains like Atari. Both PoE-World and <span class="system-name">OneLife</span> represent the transition function as a weighted product of programs. We reimplement this baseline with our exploration policy and law synthesizer.</li>
+            </ul>
+
+            <h4 class="title is-5">Results</h4>
+            
+            <figure style="margin: 2rem 0;">
+                <img src="static/table_wm_comparison.png" alt="World model comparison table" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
+                <figcaption class="caption">
+                    Performance comparison of world modeling methods on the Crafter-OO environment, averaged over ten trials. We evaluate models on two criteria: <strong>state fidelity</strong> and <strong>state ranking</strong>. All methods use the <span class="system-name">OneLife</span> exploration policy and law synthesizer but differ in their parameter inference method. <span class="system-name">OneLife</span> shows significant improvements over the PoE-World inference algorithm and <span class="system-name">OneLife</span> variant without parameter inference. The random baseline is shaded in gray.
+                </figcaption>
+            </figure>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Planning with the Learned World Model</h2>
+        <div class="content has-text-justified">
+            <p>
+                To assess the practical utility of the learned world model, we evaluate its effectiveness in a planning context. Our protocol tests the model's ability to distinguish between effective and ineffective plans through forward simulation. For a set of scenarios, we define a reward function and two distinct, programmatic policies (plans) to achieve a goal within the scenario. Each plan is represented as a hierarchical policy (in code) that composes subroutines for navigation, interaction, and crafting.
+            </p>
+            
+            <p>
+                We execute rollouts of both plans within our learned world model and, separately, within the ground-truth environment. The measure of success is whether the world model's simulation yields the same preference ranking over the two plans as the true environment, based on the final reward. This assesses if the model has captured the causal dynamics necessary for goal-directed reasoning.
+            </p>
+            
+            <h3 class="title is-5">Setup</h3>
+            <p>
+                We design three scenarios that test distinct aspects of the environment's mechanics: combat, tool-use and resource consumption. In the <strong>Zombie Fighter</strong> scenario, an agent with low health must defeat two zombies. The superior plan involves a multi-step process: pathfinding to locate and harvest trees, crafting a table and then a sword, and only then engaging in combat. The alternative is to fight immediately.
+            </p>
+            
+            <p>
+                The <strong>Stone Miner</strong> scenario tests the model's understanding of resource collection. The effective plan is to first harvest wood, craft a pickaxe, pathfind to a stone, and then mine. Attempting to mine stone directly is ineffective. Finally, the <strong>Sword Maker</strong> scenario evaluates knowledge of resource consumption. The goal is to craft multiple swords. The efficient plan places a single crafting table and reuses it, whereas the inefficient plan wastes wood by placing a new table for each sword.
+            </p>
+            
+            <p>
+                On average, a plan requires approximately 18 steps to execute, with the longest plans taking over 30 steps. Thus, simulating the results of these plans tests the ability of the world model to accurately model the consequences of long sequences of actions upon the world.
+            </p>
+            
+            <figure style="margin: 2rem 0;">
+                <img src="static/plan_qualitative_animated.gif" alt="Plan execution within OneLife's world model" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
+                <figcaption class="caption">
+                    Example of plan execution <em>within</em> <span class="system-name">OneLife</span>'s world model for the "Stone Miner" scenario. The effective plan carries out a multi-step sequence of gathering wood, crafting a wooden pickaxe, and then attempting to mine. The ineffective plan attempts to mine the stone directly. The world learned by <span class="system-name">OneLife</span> correctly simulates causal game mechanics that cause the effective plan to succeed and the ineffective plan to fail.
+                </figcaption>
+            </figure>
+            
+            <h3 class="title is-5">Results</h3>
+            <p>
+                Across all three scenarios, our learned world model correctly predicts the more effective plan. The ranking of plans generated by simulating rollouts in <span class="system-name">OneLife</span> matches the ranking from the ground-truth environment. For instance, in the Zombie Fighter scenario, the model correctly simulates that the multi-step plan of crafting a sword leads to higher Damage Per Second, identifying it as the superior strategy. This demonstrates that <span class="system-name">OneLife</span> captures a sufficiently accurate causal model of the world to support basic, goal-oriented planning.
+            </p>
+            
+            <figure style="margin: 2rem 0;">
+                <img src="static/table_planning_results.png" alt="Planning results table" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
+                <figcaption class="caption">
+                    Planning results across three scenarios. <span class="system-name">OneLife</span> correctly identifies the superior plan in each scenario by simulating rollouts and comparing final rewards.
+                </figcaption>
+            </figure>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Citation</h2>
+        <div class="content">
+            <pre><code>@inproceedings{khan2025executable,
+  title={Executable Functional Abstractions: Inferring Generative Programs for Advanced Math Problems},
+  author={Khan, Zaid and Stengel-Eskin, Elias and Prasad, Archiki and Cho, Jaemin and Bansal, Mohit},
+  journal={arXiv preprint arXiv:2504.09763},
+  year={2025}
+}</code></pre>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="content has-text-centered">
+            <p>
+                Website template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>
+            </p>
+        </div>
+    </div>
+</footer>
+
+<script>
+document.getElementById('copy-citation').addEventListener('click', function() {
+    const citationText = `@inproceedings{khan2025executable,
+  title={Executable Functional Abstractions: Inferring Generative Programs for Advanced Math Problems},
+  author={Khan, Zaid and Stengel-Eskin, Elias and Prasad, Archiki and Cho, Jaemin and Bansal, Mohit},
+  journal={arXiv preprint arXiv:2504.09763},
+  year={2025}
+}`;
+    
+    navigator.clipboard.writeText(citationText).then(function() {
+        alert('Citation copied to clipboard!');
+    }, function(err) {
+        console.error('Could not copy text: ', err);
+    });
+});
+</script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+</body>
+</html>

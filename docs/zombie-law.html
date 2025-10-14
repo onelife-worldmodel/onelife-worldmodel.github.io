@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Zombie Chase Law - OneLife</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
+    
+    <!-- Highlight.js for code highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.6;
+        }
+        .publication-title {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+            font-size: 2.3rem !important;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        .content-block {
+            max-width: 900px;
+        }
+        .content {
+            font-family: 'DM Sans', sans-serif;
+        }
+        .navbar, .footer {
+            font-family: 'DM Sans', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'DM Serif Display', serif;
+            font-weight: 400;
+        }
+        .system-name {
+            font-family: 'JetBrains Mono', monospace;
+            color: #2563eb;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .section {
+            padding: 3rem 1.5rem;
+        }
+        pre {
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        pre code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            display: block;
+            padding: 1.5rem;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+        }
+        .back-link:hover {
+            color: #1d4ed8;
+            gap: 0.75rem;
+        }
+        .law-box {
+            background: #f9fafb;
+            border-left: 4px solid #2563eb;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+        .law-box h3 {
+            margin-top: 0;
+            color: #2563eb;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="index.html">
+            <span class="icon">
+                <i class="fas fa-arrow-left"></i>
+            </span>
+            <span>Back to Main</span>
+        </a>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-body">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered">
+                <div class="column has-text-centered">
+                    <h1 class="title is-1 publication-title">Synthesized Zombie Chase Law</h1>
+                    <p class="subtitle is-4">
+                        An example of a world law learned by <span class="system-name">OneLife</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container is-max-desktop content-block">
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to main page</span>
+        </a>
+        
+        <div class="content has-text-justified">
+            <pre><code class="python">class ZombieAggroMovement:
+    def __init__(self):
+        """Initialize with configurable parameters."""
+        pass # No specific parameters are needed for this observed law.
+    
+    def precondition(self, current_state: WorldState, action: str) -> bool:
+        """Return True if this law should apply to the given state and action."""
+        # This law applies if there are any ZombieState entities within the player's
+        # update range, as their movement is an autonomous process.
+        zombies_in_range = current_state.get_object_of_type_in_update_range(ZombieState)
+        return len(zombies_in_range) > 0
+    
+    def effect(self, current_state: WorldState, action: str) -> None:
+        """Apply the law by modifying the world state."""
+        player_pos = current_state.player.position
+
+        # Retrieve all ZombieState objects that are within the update range.
+        # This implicitly filters for zombies close enough to be active/observable.
+        zombies_to_update = current_state.get_object_of_type_in_update_range(ZombieState)
+
+        for zombie in zombies_to_update:
+            # Calculate the differences in coordinates between the player and the zombie.
+            dx = player_pos.x - zombie.position.x
+            dy = player_pos.y - zombie.position.y
+
+            # Initialize new positions to current positions (no movement by default)
+            new_x = zombie.position.x
+            new_y = zombie.position.y
+
+            # Prioritize movement along the X-axis
+            if dx != 0:
+                # Move one step towards the player along the X-axis.
+                new_x = zombie.position.x + (1 if dx > 0 else -1)
+            elif dy != 0:
+                # If X-axis is already aligned, move one step towards the player along the Y-axis.
+                new_y = zombie.position.y + (1 if dy > 0 else -1)
+            
+            # Update the zombie's position in the state using DiscreteDistribution.
+            zombie.position.x = DiscreteDistribution(support=[new_x])
+            zombie.position.y = DiscreteDistribution(support=[new_y])</code></pre>
+            
+            <a href="index.html" class="back-link" style="margin-top: 2rem;">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to main page</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="content has-text-centered">
+            <p>
+                Website template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>
+            </p>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
+
