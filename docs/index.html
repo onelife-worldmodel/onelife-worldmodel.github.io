@@ -466,20 +466,110 @@
                 <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
                     <div>
                         <h4 class="title is-6">Current State</h4>
-                        <pre id="current-state" style="background: #f5f5f5; padding: 1rem; border-radius: 4px; overflow-x: auto; max-height: 400px; font-size: 0.85rem;"></pre>
+                        <div style="position: relative;">
+                            <pre class="json-state-container"><code id="current-state" class="language-json" style="display: block;"></code></pre>
+                            <div class="scroll-indicator">
+                                <i class="fas fa-chevron-down"></i> Scroll to see more
+                            </div>
+                            <div class="fade-overlay"></div>
+                        </div>
                     </div>
                     
                     <div id="diff-container" style="display: none;">
                         <h4 class="title is-6">Changes (Diff)</h4>
-                        <pre id="state-diff" style="background: #f5f5f5; padding: 1rem; border-radius: 4px; overflow-x: auto; max-height: 300px; font-size: 0.85rem;"></pre>
+                        <div style="position: relative;">
+                            <pre id="state-diff" class="diff-container-pre"></pre>
+                            <div class="scroll-indicator-diff">
+                                <i class="fas fa-chevron-down"></i> Scroll to see more
+                            </div>
+                            <div class="fade-overlay-diff"></div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 
             <style>
                 .diff-add { background-color: #d4edda; color: #155724; }
                 .diff-remove { background-color: #f8d7da; color: #721c24; }
                 .diff-context { color: #6c757d; }
+                
+                /* Container for JSON state with visual scroll indicators */
+                .json-state-container {
+                    background: #282c34;
+                    padding: 1rem;
+                    border-radius: 4px;
+                    overflow: auto;
+                    max-height: 400px;
+                    font-size: 0.85rem;
+                    position: relative;
+                }
+                
+                .diff-container-pre {
+                    background: #f5f5f5;
+                    padding: 1rem;
+                    border-radius: 4px;
+                    overflow: auto;
+                    max-height: 300px;
+                    font-size: 0.85rem;
+                    border: 1px solid #ddd;
+                }
+                
+                /* Gradient fade overlay at bottom to indicate scrollable content */
+                .fade-overlay {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 80px;
+                    background: linear-gradient(to bottom, transparent 0%, rgba(40, 44, 52, 0.9) 70%, rgba(40, 44, 52, 1) 100%);
+                    pointer-events: none;
+                    border-radius: 0 0 4px 4px;
+                }
+                
+                .fade-overlay-diff {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 60px;
+                    background: linear-gradient(to bottom, transparent 0%, rgba(245, 245, 245, 0.9) 70%, rgba(245, 245, 245, 1) 100%);
+                    pointer-events: none;
+                    border-radius: 0 0 4px 4px;
+                }
+                
+                /* Scroll indicator text */
+                .scroll-indicator,
+                .scroll-indicator-diff {
+                    position: absolute;
+                    bottom: 8px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    font-size: 0.8rem;
+                    font-weight: 500;
+                    z-index: 10;
+                    pointer-events: none;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    animation: bounce 2s infinite;
+                }
+                
+                .scroll-indicator {
+                    color: #9ca3af;
+                }
+                
+                .scroll-indicator-diff {
+                    color: #666;
+                }
+                
+                @keyframes bounce {
+                    0%, 100% { transform: translateX(-50%) translateY(0); }
+                    50% { transform: translateX(-50%) translateY(-5px); }
+                }
             </style>
 
             <script>
@@ -587,7 +677,40 @@
                 let currentState = JSON.parse(JSON.stringify(initialState));
 
                 function displayState(state) {
-                    document.getElementById('current-state').textContent = JSON.stringify(state, null, 2);
+                    const stateElement = document.getElementById('current-state');
+                    // Remove previous highlighting
+                    stateElement.removeAttribute('data-highlighted');
+                    stateElement.className = 'language-json';
+                    // Set the JSON content
+                    stateElement.textContent = JSON.stringify(state, null, 2);
+                    // Apply syntax highlighting
+                    hljs.highlightElement(stateElement);
+                    // Check if scroll indicator should be shown
+                    updateScrollIndicators();
+                }
+                
+                function updateScrollIndicators() {
+                    // Check JSON state container
+                    const stateContainer = document.querySelector('.json-state-container');
+                    const stateIndicator = document.querySelector('.scroll-indicator');
+                    const stateFade = document.querySelector('.fade-overlay');
+                    
+                    if (stateContainer && stateIndicator && stateFade) {
+                        const isScrollable = stateContainer.scrollHeight > stateContainer.clientHeight;
+                        stateIndicator.style.display = isScrollable ? 'flex' : 'none';
+                        stateFade.style.display = isScrollable ? 'block' : 'none';
+                    }
+                    
+                    // Check diff container
+                    const diffContainer = document.getElementById('state-diff');
+                    const diffIndicator = document.querySelector('.scroll-indicator-diff');
+                    const diffFade = document.querySelector('.fade-overlay-diff');
+                    
+                    if (diffContainer && diffIndicator && diffFade) {
+                        const isScrollable = diffContainer.scrollHeight > diffContainer.clientHeight;
+                        diffIndicator.style.display = isScrollable ? 'flex' : 'none';
+                        diffFade.style.display = isScrollable ? 'block' : 'none';
+                    }
                 }
 
                 function generateDiff(oldState, newState) {
@@ -668,6 +791,9 @@
                     const diffHtml = generateDiff(oldState, currentState);
                     document.getElementById('state-diff').innerHTML = diffHtml;
                     document.getElementById('diff-container').style.display = 'block';
+                    
+                    // Update scroll indicators after DOM updates
+                    setTimeout(updateScrollIndicators, 50);
                 }
 
                 function resetState() {
@@ -676,8 +802,24 @@
                     document.getElementById('diff-container').style.display = 'none';
                 }
 
-                // Initialize display
-                displayState(currentState);
+                // Initialize display - wait for both DOM and highlight.js to be ready
+                function initializeDisplay() {
+                    if (typeof hljs !== 'undefined') {
+                        displayState(currentState);
+                        // Check scroll indicators after a brief delay to ensure rendering is complete
+                        setTimeout(updateScrollIndicators, 100);
+                    } else {
+                        // Retry after a short delay if hljs isn't loaded yet
+                        setTimeout(initializeDisplay, 100);
+                    }
+                }
+                
+                // Initialize when DOM is ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initializeDisplay);
+                } else {
+                    initializeDisplay();
+                }
             </script>
 
             <p style="margin-top: 1.5rem;">
