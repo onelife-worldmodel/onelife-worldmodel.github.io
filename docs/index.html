@@ -18,6 +18,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
     <style>
         html {
             scroll-behavior: smooth;
@@ -285,6 +288,132 @@
         .efa-term {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 700;
+        }
+        
+        /* Law Carousel Styles */
+        .law-carousel-container {
+            position: relative;
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+        
+        .law-carousel {
+            background: #282c34;
+            border-radius: 8px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .law-slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+        
+        .law-slide.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .law-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            color: #61dafb;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .law-code-container {
+            max-height: 500px;
+            overflow: auto;
+            border-radius: 4px;
+        }
+        
+        .law-code-container pre {
+            margin: 0;
+            background: transparent;
+        }
+        
+        .law-code-container code {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .carousel-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+        
+        .carousel-button {
+            background: linear-gradient(to right, #292524, #44403c);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .carousel-button:hover {
+            background: linear-gradient(to right, #44403c, #292524);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .carousel-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .carousel-indicators {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .carousel-dot.active {
+            background: #61dafb;
+            width: 12px;
+            height: 12px;
+        }
+        
+        .carousel-counter {
+            font-family: 'DM Sans', sans-serif;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+        
+        @media screen and (max-width: 768px) {
+            .law-carousel {
+                padding: 1rem;
+            }
+            
+            .carousel-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .law-code-container code {
+                font-size: 0.8rem;
+            }
         }
     </style>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -972,6 +1101,239 @@
     </div>
 </section>
 
+<section class="section" id="sec-laws">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">Synthesized World Laws</h2>
+        <div class="content has-text-justified">
+            <p>
+                <span class="system-name">OneLife</span> synthesizes modular, programmatic laws that capture the dynamics of the environment. Each law implements a precondition-effect structure where the precondition determines when the law should activate, and the effect specifies how the world state changes. Below are examples of laws synthesized by our system:
+            </p>
+        </div>
+
+        <div class="law-carousel-container">
+            <div class="law-carousel">
+                <!-- Slide 1: Zombie Chase Law -->
+                <div class="law-slide active" data-law="zombie-chase">
+                    <h3 class="law-title">Zombie Chase Law</h3>
+                    <div class="law-code-container">
+                        <pre><code class="language-python">class ZombieAggroMovement:
+    def __init__(self):
+        """Initialize with configurable parameters."""
+        pass # No specific parameters are needed for this observed law.
+    
+    def precondition(self, current_state: WorldState, action: str) -> bool:
+        """Return True if this law should apply to the given state and action."""
+        # This law applies if there are any ZombieState entities within the player's
+        # update range, as their movement is an autonomous process.
+        zombies_in_range = current_state.get_object_of_type_in_update_range(ZombieState)
+        return len(zombies_in_range) > 0
+    
+    def effect(self, current_state: WorldState, action: str) -> None:
+        """Apply the law by modifying the world state."""
+        player_pos = current_state.player.position
+
+        # Retrieve all ZombieState objects that are within the update range.
+        # This implicitly filters for zombies close enough to be active/observable.
+        zombies_to_update = current_state.get_object_of_type_in_update_range(ZombieState)
+
+        for zombie in zombies_to_update:
+            # Calculate the differences in coordinates between the player and the zombie.
+            dx = player_pos.x - zombie.position.x
+            dy = player_pos.y - zombie.position.y
+
+            # Initialize new positions to current positions (no movement by default)
+            new_x = zombie.position.x
+            new_y = zombie.position.y
+
+            # Prioritize movement along the X-axis
+            if dx != 0:
+                # Move one step towards the player along the X-axis.
+                new_x = zombie.position.x + (1 if dx > 0 else -1)
+            elif dy != 0:
+                # If X-axis is already aligned, move one step towards the player along the Y-axis.
+                new_y = zombie.position.y + (1 if dy > 0 else -1)
+            
+            # Update the zombie's position in the state using DiscreteDistribution.
+            zombie.position.x = DiscreteDistribution(support=[new_x])
+            zombie.position.y = DiscreteDistribution(support=[new_y])</code></pre>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Skeleton Movement Law -->
+                <div class="law-slide" data-law="skeleton-movement">
+                    <h3 class="law-title">Skeleton Random Movement Law</h3>
+                    <div class="law-code-container">
+                        <pre><code class="language-python">class SkeletonRandomMovementLaw:
+    def __init__(self):
+        """Initialize with configurable parameters."""
+        pass
+    
+    def precondition(self, current_state: WorldState, action: str) -> bool:
+        """Return True if this law should apply to the given state and action."""
+        # This law applies generally to all skeletons, independent of player action for movement
+        return True
+    
+    def effect(self, current_state: WorldState, action: str) -> None:
+        """Apply the law by modifying the world state."""
+        skeletons = [obj for obj in current_state.objects if isinstance(obj, SkeletonState)]
+
+        for skeleton in skeletons:
+            current_x = skeleton.position.x
+            current_y = skeleton.position.y
+
+            # Possible next X positions: current_x, current_x + 1, current_x - 1
+            skeleton.position.x = DiscreteDistribution(support=[
+                current_x, 
+                current_x + 1, 
+                current_x - 1
+            ])
+            # Possible next Y positions: current_y, current_y + 1, current_y - 1
+            skeleton.position.y = DiscreteDistribution(support=[
+                current_y, 
+                current_y + 1, 
+                current_y - 1
+            ])</code></pre>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Craft Stone Pickaxe Law -->
+                <div class="law-slide" data-law="craft-pickaxe">
+                    <h3 class="law-title">Craft Stone Pickaxe Law</h3>
+                    <div class="law-code-container">
+                        <pre><code class="language-python">class CraftStonePickaxe:
+    def __init__(self):
+        """Initialize with configurable parameters."""
+        # No specific parameters needed for this crafting recipe.
+        pass
+    
+    def precondition(self, current_state: WorldState, action: str) -> bool:
+        """Return True if this law should apply to the given state and action."""
+        # Check if the action is "Make Stone Pickaxe"
+        if action == "Make Stone Pickaxe":
+            # Check if player has required materials
+            has_wood = current_state.player.inventory.wood >= 1
+            has_stone = current_state.player.inventory.stone >= 1
+            return has_wood and has_stone
+        return False
+    
+    def effect(self, current_state: WorldState, action: str) -> None:
+        """Apply the law by modifying the world state."""
+        # Decrease wood by 1
+        current_state.player.inventory.wood = DiscreteDistribution(support=[current_state.player.inventory.wood - 1])
+        # Decrease stone by 1
+        current_state.player.inventory.stone = DiscreteDistribution(support=[current_state.player.inventory.stone - 1])
+        # Increase stone_pickaxe by 1
+        current_state.player.inventory.stone_pickaxe = DiscreteDistribution(support=[current_state.player.inventory.stone_pickaxe + 1])</code></pre>
+                    </div>
+                </div>
+
+                <!-- Slide 4: Mine Stone Law -->
+                <div class="law-slide" data-law="mine-stone">
+                    <h3 class="law-title">Mine Stone Law</h3>
+                    <div class="law-code-container">
+                        <pre><code class="language-python">class MineStoneLaw:
+    def __init__(self):
+        """Initialize with configurable parameters."""
+        pass
+    
+    def precondition(self, current_state: WorldState, action: str) -> bool:
+        """Return True if this law should apply to the given state and action."""
+        if action != "Do":
+            return False
+        
+        target_material, _ = current_state.get_target_tile()
+        
+        if target_material == "stone":
+            # Check if the player has any pickaxe
+            has_pickaxe = (
+                current_state.player.inventory.wood_pickaxe > 0 or
+                current_state.player.inventory.stone_pickaxe > 0 or
+                current_state.player.inventory.iron_pickaxe > 0
+            )
+            return has_pickaxe
+            
+        return False
+    
+    def effect(self, current_state: WorldState, action: str) -> None:
+        """Apply the law by modifying the world state."""
+        # Increment stone in inventory
+        current_state.player.inventory.stone = DiscreteDistribution(
+            support=[current_state.player.inventory.stone + 1]
+        )
+        
+        # Replace the mined stone material with grass
+        current_state.set_facing_material("grass")</code></pre>
+                    </div>
+                </div>
+
+                <!-- Slide 5: Health Regeneration Law -->
+                <div class="law-slide" data-law="health-regen">
+                    <h3 class="law-title">Health Regeneration Law</h3>
+                    <div class="law-code-container">
+                        <pre><code class="language-python">class PlayerInventoryHealthRegeneration:
+    def __init__(self, max_health: int = 20, recover_threshold: float = 1.0):
+        """Initialize with configurable parameters for health regeneration."""
+        self.max_health = max_health
+        self.recover_threshold = recover_threshold
+    
+    def precondition(self, current_state: WorldState, action: str) -> bool:
+        """
+        Return True if the player's inventory health should regenerate.
+        This law applies if the player is not at max health, has sufficient
+        recover points, and is not sleeping.
+        """
+        player = current_state.player
+        
+        # Check if player's current inventory health is less than the defined maximum
+        has_space_for_health = player.inventory.health < self.max_health
+        
+        # Check if player has sufficient recover points to enable regeneration
+        has_recover_points = player.recover >= self.recover_threshold
+        
+        # Check if the player is not currently sleeping
+        not_sleeping = not player.sleeping
+
+        # This is a passive regeneration effect, so the specific action taken (e.g., "Move North")
+        # is not a direct precondition, but the effect occurs during the state transition.
+        return has_space_for_health and has_recover_points and not_sleeping
+    
+    def effect(self, current_state: WorldState, action: str) -> None:
+        """
+        Apply the law by increasing the player's inventory health by 1.
+        """
+        # Increment the player's inventory health by 1.
+        current_state.player.inventory.health = DiscreteDistribution(support=[current_state.player.inventory.health + 1])</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-nav">
+                <button class="carousel-button" id="prev-law">
+                    <i class="fas fa-chevron-left"></i>
+                    <span>Previous</span>
+                </button>
+                
+                <div class="carousel-indicators">
+                    <span class="carousel-counter">
+                        <span id="current-slide">1</span> / <span id="total-slides">5</span>
+                    </span>
+                </div>
+                
+                <button class="carousel-button" id="next-law">
+                    <span>Next</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="content has-text-justified" style="margin-top: 2rem;">
+            <p class="caption">
+                These laws are automatically synthesized from a single unguided episode in the Crafter-OO environment. Each law captures a specific aspect of the world's dynamics: zombie behavior, skeleton movement, crafting mechanics, resource gathering, and passive effects. The precondition-effect structure allows laws to activate only when relevant, creating a sparse, modular representation of the world's dynamics.
+            </p>
+        </div>
+    </div>
+</section>
+
 <section class="section">
     <div class="container is-max-desktop content-block">
         <h2 class="title is-3">Citation</h2>
@@ -1015,6 +1377,87 @@ document.getElementById('copy-citation').addEventListener('click', function() {
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+<script>
+// Law Carousel Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const slides = document.querySelectorAll('.law-slide');
+    const prevButton = document.getElementById('prev-law');
+    const nextButton = document.getElementById('next-law');
+    const currentSlideSpan = document.getElementById('current-slide');
+    const totalSlidesSpan = document.getElementById('total-slides');
+    
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+    
+    // Initialize highlight.js for code blocks
+    if (typeof hljs !== 'undefined') {
+        slides.forEach(slide => {
+            const codeBlock = slide.querySelector('code');
+            if (codeBlock) {
+                hljs.highlightElement(codeBlock);
+            }
+        });
+    }
+    
+    function updateCarousel() {
+        // Hide all slides
+        slides.forEach((slide, index) => {
+            slide.classList.remove('active');
+            if (index === currentIndex) {
+                slide.classList.add('active');
+            }
+        });
+        
+        // Update counter
+        currentSlideSpan.textContent = currentIndex + 1;
+        
+        // Update button states
+        prevButton.disabled = currentIndex === 0;
+        nextButton.disabled = currentIndex === totalSlides - 1;
+    }
+    
+    function nextSlide() {
+        if (currentIndex < totalSlides - 1) {
+            currentIndex++;
+            updateCarousel();
+        }
+    }
+    
+    function prevSlide() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateCarousel();
+        }
+    }
+    
+    // Event listeners
+    prevButton.addEventListener('click', prevSlide);
+    nextButton.addEventListener('click', nextSlide);
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        // Only handle arrow keys if the carousel is in view
+        const carouselSection = document.getElementById('sec-laws');
+        const rect = carouselSection.getBoundingClientRect();
+        const isInView = rect.top < window.innerHeight && rect.bottom >= 0;
+        
+        if (isInView) {
+            if (e.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+            }
+        }
+    });
+    
+    // Initialize total slides display
+    totalSlidesSpan.textContent = totalSlides;
+    
+    // Initial update
+    updateCarousel();
+});
+</script>
 
 </body>
 </html>
