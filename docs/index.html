@@ -430,6 +430,29 @@
     </div>
 </section>
 
+<section class="section" id="sec-how-it-works">
+    <div class="container is-max-desktop content-block">
+        <h2 class="title is-3">How <span class="system-name">OneLife</span> Works</h2>
+        <div class="content has-text-justified">
+            <figure style="margin-bottom: 1.5rem;">
+                <img src="static/comp_graph.png" alt="Computation graph and dynamic routing of laws" style="width: 100%; max-width: 900px; margin: 0 auto; display: block;">
+                <figcaption class="caption">
+                    Illustration of the inference process. The active laws for each observable (defined by \(\mathcal{I}_k(s_t, a)\)) determine the structure of the computation graph, i.e., which laws and their corresponding parameters \(\theta_i\) are related to which observables. This structure in turn informs the parameter updates. 
+                    Shown here is a dataset with a single transition instance, in which the player (P) moves right; at the same time, a zombie (Z) independently moves left. 
+                    This implicates two laws, <code>PlayerMovementLaw</code> and <code>ZombieMovementLaw</code>, while not implicating the <code>InventoryUpdateLaw</code>. 
+                    As a result, the loss computation is only a function of \(\theta_1\) and \(\theta_2\). Note we use \(Z\) here to denote the normalizing factor.
+                </figcaption>
+            </figure>
+
+            <p><strong>Mixture of programmatic laws (precondition–effect) + observables:</strong> We represent dynamics as a mixture of modular laws written in code. Each law activates when its precondition holds and only predicts a subset of state <em>observables</em> (e.g., <code>player.position</code>), creating a sparse, modular interface that scales to complex, object-oriented states.</p>
+
+            <p><strong>Unguided exploration with atomic law synthesis:</strong> A language-model–driven exploration policy collects a single episode without rewards or goals. A general synthesizer then proposes simple, atomic laws that explain observed transitions (decomposing complex events into minimal attribute changes) to form a broad hypothesis set.</p>
+
+            <p><strong>Dynamic routing inference + forward simulation:</strong> For each transition, gradients and credit are <em>dynamically routed</em> only through active laws for the relevant observables; we fit the law weights via a weighted product-of-experts objective (optimized with L-BFGS). The learned model supports likelihood scoring and generative rollouts by sampling per-observable predictions and reconstructing the next symbolic state.</p>
+        </div>
+    </div>
+</section>
+
 <section class="section" id="sec-crafter-oo">
     <div class="container is-max-desktop content-block">
         <h2 class="title is-3">Crafter-OO: A Testbed for Symbolic World Modeling</h2>
