@@ -405,15 +405,35 @@
             .law-carousel {
                 padding: 1rem;
             }
-            
+
             .carousel-button {
                 padding: 0.5rem 1rem;
                 font-size: 0.9rem;
             }
-            
+
             .law-code-container code {
                 font-size: 0.8rem;
             }
+        }
+
+        .conference-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.85rem 2.25rem;
+            border-radius: 32px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .conference-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
     </style>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -438,6 +458,11 @@
         <div class="container is-max-desktop">
             <div class="columns is-centered">
                 <div class="column has-text-centered">
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <span class="conference-badge">
+                            ✨ ICLR 2026
+                        </span>
+                    </div>
                     <h1 class="title is-1 publication-title">One Life to Learn: Inferring Symbolic World Models for Stochastic Environments from Unguided Exploration</h1>
                     <div class="is-size-5 publication-authors">
                         <span class="author-block">
